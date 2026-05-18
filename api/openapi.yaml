@@ -1,0 +1,2767 @@
+openapi: 3.0.3
+info:
+  description: "The Moosyl API is a powerful API for integrating payment solutions\
+    \ with Mauritania's popular banking apps, such as Bankily, Sedad, and Masrivi.\
+    \ Simplify the payment process in your Flutter applications with features like\
+    \ webhooks and an easy-to-use client SDKs."
+  title: Moosyl API
+  version: 1.0.0
+servers:
+- url: /
+security:
+- ApiKey: []
+paths:
+  /cron/expire-subscriptions:
+    post:
+      operationId: postCronExpire-subscriptions
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/cron.result"
+          description: Response for status 200
+      summary: Process due cancellations and expirations
+      tags:
+      - cron
+      x-accepts:
+      - application/json
+  /cron/billing-cycle:
+    post:
+      operationId: postCronBilling-cycle
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/cron.result"
+          description: Response for status 200
+      summary: Process billing cycles
+      tags:
+      - cron
+      x-accepts:
+      - application/json
+  /connect/exchange:
+    post:
+      description: "Exchange a short-lived authorization code (obtained from the /connect\
+        \ flow) for the user's publishable key, secret key, and webhook secret. A\
+        \ webhook will be created using the provided endpoints."
+      operationId: postConnectExchange
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/postConnectExchange_request"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/postConnectExchange_request"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/postConnectExchange_request"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/postConnectExchange_200_response"
+          description: Response for status 200
+      summary: Exchange authorization code for API credentials
+      tags:
+      - connect
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /connect/revoke:
+    delete:
+      description: Revoke a previously authorized connection between a platform and
+        a Moosyl account.
+      operationId: deleteConnectRevoke
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/deleteConnectRevoke_request"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/deleteConnectRevoke_request"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/deleteConnectRevoke_request"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/deleteConnectRevoke_200_response"
+          description: Response for status 200
+      summary: Revoke a platform connection
+      tags:
+      - connect
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /configuration:
+    get:
+      description: Retrieve all configurations for the current environment
+      operationId: getConfiguration
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/configuration.list"
+          description: Response for status 200
+      summary: List configurations
+      tags:
+      - configuration
+      x-accepts:
+      - application/json
+  /configuration/{id}:
+    get:
+      description: Retrieve a specific configuration by ID. Requires secret API key.
+      operationId: getConfigurationById
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/configuration.get"
+          description: Response for status 200
+      summary: Get configuration
+      tags:
+      - configuration
+      x-accepts:
+      - application/json
+  /payment-request/{id}:
+    get:
+      description: Retrieve a payment request by ID
+      operationId: getPayment-requestById
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/paymentRequest.get"
+          description: Response for status 200
+      summary: Get payment request
+      tags:
+      - payment-request
+      x-accepts:
+      - application/json
+  /payment-request/by-transaction/{transactionId}:
+    get:
+      description: Retrieve a payment request by transaction ID
+      operationId: getPayment-requestBy-transactionByTransactionId
+      parameters:
+      - explode: false
+        in: path
+        name: transactionId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/paymentRequest.get"
+          description: Response for status 200
+      summary: Get payment request by transaction ID
+      tags:
+      - payment-request
+      x-accepts:
+      - application/json
+  /payment-request:
+    post:
+      description: Create a new payment request that can be used to collect payments.
+        Requires secret API key.
+      operationId: postPayment-request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/paymentRequest.create"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/paymentRequest.create"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/paymentRequest.create"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/paymentRequest.get"
+          description: Response for status 200
+      summary: Create payment request
+      tags:
+      - payment-request
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /payment-request/{transactionId}/refresh-status:
+    patch:
+      description: Refresh the status of a payment request by transaction ID. Requires
+        secret API key.
+      operationId: patchPayment-requestByTransactionIdRefresh-status
+      parameters:
+      - explode: false
+        in: path
+        name: transactionId
+        required: true
+        schema:
+          description: The transaction ID of the payment request to refresh
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/paymentRequest.refreshStatus"
+          description: Response for status 200
+      summary: Refresh payment request status
+      tags:
+      - payment-request
+      x-accepts:
+      - application/json
+  /payment:
+    post:
+      description: |-
+        Use this endpoint to create a new payment for an existing payment request.
+
+        **Testing (Sandbox Environment Only)**
+
+        | Phone Number | Status     |
+        |--------------|------------|
+        | 22222222     | Accepted   |
+        | 33333333     | Accepted   |
+        | 44444444     | Accepted   |
+        | Other        | Rejected   |
+      operationId: postPayment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/payment.create"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/payment.create"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/payment.create"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/postPayment_200_response"
+          description: Response for status 200
+      summary: Create a new payment
+      tags:
+      - payment
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /payment/{id}:
+    get:
+      description: Retrieve detailed information about a payment by transaction ID.
+        Requires secret API key.
+      operationId: getPaymentById
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/payment.get"
+          description: Response for status 200
+      summary: Get payment details
+      tags:
+      - payment
+      x-accepts:
+      - application/json
+  /checkout-session:
+    post:
+      description: "Create a hosted checkout session from paymentRequestId, or from\
+        \ transactionId (optionally creating the payment request when amount is provided)."
+      operationId: postCheckout-session
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/checkoutSession.createBody"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/checkoutSession.createBody"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/checkoutSession.createBody"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/checkoutSession.create"
+          description: Response for status 200
+      summary: Create checkout session
+      tags:
+      - checkout-session
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /checkout-session/public/{id}:
+    get:
+      description: Get checkout session details without an API key.
+      operationId: getCheckout-sessionPublicById
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/checkoutSession.get"
+          description: Response for status 200
+      security: []
+      summary: Get public checkout session
+      tags:
+      - checkout-session
+      x-accepts:
+      - application/json
+  /checkout-session/public/{id}/switch-method:
+    post:
+      description: Switch checkout method and cancel the latest pending payment when
+        present.
+      operationId: postCheckout-sessionPublicByIdSwitch-method
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/checkoutSession.selectMethod.body"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/checkoutSession.selectMethod.body"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/checkoutSession.selectMethod.body"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/checkoutSession.switchMethod"
+          description: Response for status 200
+      security: []
+      summary: Switch public checkout method
+      tags:
+      - checkout-session
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /checkout-session/public/{id}/pay:
+    post:
+      description: Create payment for a checkout session without requiring API key
+        in the client.
+      operationId: postCheckout-sessionPublicByIdPay
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/checkoutSession.pay.body"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/checkoutSession.pay.body"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/checkoutSession.pay.body"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/postCheckout_sessionPublicByIdPay_200_response"
+          description: Response for status 200
+      security: []
+      summary: Pay public checkout session
+      tags:
+      - checkout-session
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /products/:
+    get:
+      operationId: getProducts
+      parameters:
+      - explode: true
+        in: query
+        name: id
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          $ref: "#/components/schemas/getProducts_page_parameter"
+        style: form
+      - explode: true
+        in: query
+        name: limit
+        required: false
+        schema:
+          $ref: "#/components/schemas/getProducts_page_parameter"
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/product.list"
+          description: Response for status 200
+      summary: List products or filter by id
+      tags:
+      - products
+      x-accepts:
+      - application/json
+    post:
+      operationId: postProducts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/product.create"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/product.create"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/product.create"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/product.get"
+          description: Response for status 200
+      summary: Create product
+      tags:
+      - products
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /products/{id}:
+    get:
+      operationId: getProductsById
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/product.getWithPrices"
+          description: Response for status 200
+      summary: Get product with prices
+      tags:
+      - products
+      x-accepts:
+      - application/json
+    patch:
+      operationId: patchProductsById
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/product.update"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/product.update"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/product.update"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/product.get"
+          description: Response for status 200
+      summary: Update product
+      tags:
+      - products
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /products/{id}/archive:
+    patch:
+      operationId: patchProductsByIdArchive
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/success"
+          description: Response for status 200
+      summary: Archive product
+      tags:
+      - products
+      x-accepts:
+      - application/json
+  /prices/{id}:
+    get:
+      operationId: getPricesById
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/price.get"
+          description: Response for status 200
+      summary: Get price
+      tags:
+      - prices
+      x-accepts:
+      - application/json
+    patch:
+      operationId: patchPricesById
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/price.update"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/price.update"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/price.update"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/price.get"
+          description: Response for status 200
+      summary: Update price
+      tags:
+      - prices
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /prices/:
+    post:
+      operationId: postPrices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/price.create"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/price.create"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/price.create"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/price.get"
+          description: Response for status 200
+      summary: Create price
+      tags:
+      - prices
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /prices/{id}/archive:
+    patch:
+      operationId: patchPricesByIdArchive
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/success"
+          description: Response for status 200
+      summary: Archive price
+      tags:
+      - prices
+      x-accepts:
+      - application/json
+  /customers/:
+    get:
+      operationId: getCustomers
+      parameters:
+      - explode: true
+        in: query
+        name: id
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: externalUserId
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          $ref: "#/components/schemas/getProducts_page_parameter"
+        style: form
+      - explode: true
+        in: query
+        name: limit
+        required: false
+        schema:
+          $ref: "#/components/schemas/getProducts_page_parameter"
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/customer.list"
+          description: Response for status 200
+      summary: List customers or filter by id/external user
+      tags:
+      - customers
+      x-accepts:
+      - application/json
+    post:
+      operationId: postCustomers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/customer.create"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/customer.create"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/customer.create"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/customer.get"
+          description: Response for status 200
+      summary: Create customer
+      tags:
+      - customers
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /customers/{id}:
+    patch:
+      operationId: patchCustomersById
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/customer.update"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/customer.update"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/customer.update"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/customer.get"
+          description: Response for status 200
+      summary: Update customer
+      tags:
+      - customers
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /subscriptions/:
+    get:
+      operationId: getSubscriptions
+      parameters:
+      - explode: true
+        in: query
+        name: status
+        required: false
+        schema:
+          enum:
+          - trialing
+          - active
+          - past_due
+          - paused
+          - cancelled
+          - expired
+          - pending_cancellation
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          $ref: "#/components/schemas/getProducts_page_parameter"
+        style: form
+      - explode: true
+        in: query
+        name: limit
+        required: false
+        schema:
+          $ref: "#/components/schemas/getProducts_page_parameter"
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/subscription.list"
+          description: Response for status 200
+      summary: List subscriptions
+      tags:
+      - subscriptions
+      x-accepts:
+      - application/json
+    post:
+      operationId: postSubscriptions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/subscription.create"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/subscription.create"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/subscription.create"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/subscription.get"
+          description: Response for status 200
+      summary: Create subscription
+      tags:
+      - subscriptions
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /subscriptions/{id}:
+    get:
+      operationId: getSubscriptionsById
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/subscription.get"
+          description: Response for status 200
+      summary: Get subscription
+      tags:
+      - subscriptions
+      x-accepts:
+      - application/json
+  /subscriptions/by-external-user:
+    post:
+      operationId: postSubscriptionsBy-external-user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/subscription.createByExternalUser"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/subscription.createByExternalUser"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/subscription.createByExternalUser"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/subscription.get"
+          description: Response for status 200
+      summary: Create subscription by external user
+      tags:
+      - subscriptions
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /subscriptions/by-external-user/{externalUserId}:
+    get:
+      operationId: getSubscriptionsBy-external-userByExternalUserId
+      parameters:
+      - explode: false
+        in: path
+        name: externalUserId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/subscription.get"
+          description: Response for status 200
+      summary: Get subscription by external user
+      tags:
+      - subscriptions
+      x-accepts:
+      - application/json
+  /subscriptions/{id}/cancel:
+    post:
+      operationId: postSubscriptionsByIdCancel
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/subscription.get"
+          description: Response for status 200
+      summary: Cancel subscription
+      tags:
+      - subscriptions
+      x-accepts:
+      - application/json
+  /invoices/:
+    get:
+      operationId: getInvoices
+      parameters:
+      - explode: true
+        in: query
+        name: id
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: externalUserId
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: subscriptionId
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          $ref: "#/components/schemas/getProducts_page_parameter"
+        style: form
+      - explode: true
+        in: query
+        name: limit
+        required: false
+        schema:
+          $ref: "#/components/schemas/getProducts_page_parameter"
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/invoice.list"
+          description: Response for status 200
+      summary: List invoices or filter by id/external user
+      tags:
+      - invoices
+      x-accepts:
+      - application/json
+  /masrivi/initiate:
+    post:
+      description: Creates a pending payment and returns form data to redirect customer
+        to Masrivi payment page.
+      operationId: postMasriviInitiate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/postMasriviInitiate_request"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/postMasriviInitiate_request"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/postMasriviInitiate_request"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/postMasriviInitiate_200_response"
+          description: Response for status 200
+      summary: Initiate Masrivi payment
+      tags:
+      - masrivi
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /organization/{id}:
+    get:
+      description: Retrieve organization information. Requires secret API key.
+      operationId: getOrganizationById
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/getOrganizationById_200_response"
+          description: Response for status 200
+      summary: Get organization details
+      tags:
+      - organization
+      x-accepts:
+      - application/json
+components:
+  schemas:
+    product.get:
+      example:
+        data:
+          organizationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          environmentId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          name: name
+          description: description
+          active: true
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        data:
+          $ref: "#/components/schemas/product_get_data"
+      required:
+      - data
+      type: object
+    product.getWithPrices:
+      example:
+        data:
+          organizationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          environmentId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          name: name
+          description: description
+          active: true
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          prices:
+          - createdAt: 2000-01-23T04:56:07.000+00:00
+            amount: -1803530559
+            productId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+            active: true
+            interval: weekly
+            id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          - createdAt: 2000-01-23T04:56:07.000+00:00
+            amount: -1803530559
+            productId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+            active: true
+            interval: weekly
+            id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        data:
+          $ref: "#/components/schemas/product_getWithPrices_data"
+      required:
+      - data
+      type: object
+    product.list:
+      example:
+        pagination:
+          total: 5.962133916683182
+          limit: 1.4658129805029452
+          totalPages: 5.637376656633329
+          page: 6.027456183070403
+        data:
+        - organizationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          environmentId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          name: name
+          description: description
+          active: true
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          prices:
+          - createdAt: 2000-01-23T04:56:07.000+00:00
+            amount: -1803530559
+            productId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+            active: true
+            interval: weekly
+            id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          - createdAt: 2000-01-23T04:56:07.000+00:00
+            amount: -1803530559
+            productId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+            active: true
+            interval: weekly
+            id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        - organizationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          environmentId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          name: name
+          description: description
+          active: true
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          prices:
+          - createdAt: 2000-01-23T04:56:07.000+00:00
+            amount: -1803530559
+            productId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+            active: true
+            interval: weekly
+            id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          - createdAt: 2000-01-23T04:56:07.000+00:00
+            amount: -1803530559
+            productId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+            active: true
+            interval: weekly
+            id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/product_getWithPrices_data"
+          type: array
+        pagination:
+          $ref: "#/components/schemas/product_list_pagination"
+      required:
+      - data
+      - pagination
+      type: object
+    product.create:
+      properties:
+        id:
+          format: uuid
+          type: string
+        name:
+          type: string
+        description:
+          nullable: true
+          type: string
+        active:
+          type: boolean
+        createdAt:
+          format: date-time
+          nullable: true
+          type: string
+      required:
+      - name
+      type: object
+    product.update:
+      properties:
+        id:
+          format: uuid
+          type: string
+        name:
+          type: string
+        description:
+          nullable: true
+          type: string
+        active:
+          type: boolean
+        createdAt:
+          format: date-time
+          nullable: true
+          type: string
+      type: object
+    price.get:
+      example:
+        data:
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          amount: -1803530559
+          productId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          active: true
+          interval: weekly
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        data:
+          $ref: "#/components/schemas/product_getWithPrices_data_prices_inner"
+      required:
+      - data
+      type: object
+    price.create:
+      properties:
+        id:
+          format: uuid
+          type: string
+        productId:
+          format: uuid
+          type: string
+        amount:
+          maximum: 2147483647
+          minimum: -2147483648
+          type: integer
+        interval:
+          enum:
+          - weekly
+          - monthly
+          - yearly
+          type: string
+        active:
+          type: boolean
+        createdAt:
+          format: date-time
+          nullable: true
+          type: string
+      required:
+      - amount
+      - interval
+      - productId
+      type: object
+    price.update:
+      properties:
+        amount:
+          $ref: "#/components/schemas/price_update_amount"
+        interval:
+          enum:
+          - weekly
+          - monthly
+          - yearly
+          type: string
+        replaceExisting:
+          type: boolean
+      type: object
+    success:
+      example:
+        success: true
+      properties:
+        success:
+          type: boolean
+      required:
+      - success
+      type: object
+    cron.result:
+      example:
+        processed: 5.962133916683182
+        total: 2.3021358869347655
+        expired: 6.027456183070403
+        processedAt: processedAt
+        cancelled: 0.8008281904610115
+        failed: 5.637376656633329
+        updated: 1.4658129805029452
+      properties:
+        cancelled:
+          type: number
+        expired:
+          type: number
+        updated:
+          type: number
+        processed:
+          type: number
+        failed:
+          type: number
+        total:
+          type: number
+        processedAt:
+          type: string
+      required:
+      - processedAt
+      type: object
+    customer.get:
+      example:
+        data:
+          organizationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          externalUserId: externalUserId
+          phone: phone
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        data:
+          $ref: "#/components/schemas/customer_get_data"
+      required:
+      - data
+      type: object
+    customer.list:
+      example:
+        pagination:
+          total: 5.962133916683182
+          limit: 1.4658129805029452
+          totalPages: 5.637376656633329
+          page: 6.027456183070403
+        data:
+        - organizationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          externalUserId: externalUserId
+          phone: phone
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        - organizationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          externalUserId: externalUserId
+          phone: phone
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/customer_get_data"
+          type: array
+        pagination:
+          $ref: "#/components/schemas/product_list_pagination"
+      required:
+      - data
+      - pagination
+      type: object
+    customer.create:
+      properties:
+        id:
+          format: uuid
+          type: string
+        externalUserId:
+          type: string
+        phone:
+          nullable: true
+          type: string
+        createdAt:
+          format: date-time
+          nullable: true
+          type: string
+      required:
+      - externalUserId
+      type: object
+    customer.update:
+      properties:
+        externalUserId:
+          type: string
+        phone:
+          nullable: true
+          type: string
+      type: object
+    subscription.get:
+      example:
+        data:
+          organizationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          nextBillingDate: 2000-01-23T04:56:07.000+00:00
+          cancelledAt: 2000-01-23T04:56:07.000+00:00
+          customerId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          startedAt: 2000-01-23T04:56:07.000+00:00
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          priceId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          expiresAt: 2000-01-23T04:56:07.000+00:00
+          status: trialing
+      properties:
+        data:
+          $ref: "#/components/schemas/subscription_get_data"
+      required:
+      - data
+      type: object
+    subscription.list:
+      example:
+        pagination:
+          total: 5.962133916683182
+          limit: 1.4658129805029452
+          totalPages: 5.637376656633329
+          page: 6.027456183070403
+        data:
+        - organizationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          nextBillingDate: 2000-01-23T04:56:07.000+00:00
+          cancelledAt: 2000-01-23T04:56:07.000+00:00
+          customerId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          startedAt: 2000-01-23T04:56:07.000+00:00
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          priceId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          expiresAt: 2000-01-23T04:56:07.000+00:00
+          status: trialing
+        - organizationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          nextBillingDate: 2000-01-23T04:56:07.000+00:00
+          cancelledAt: 2000-01-23T04:56:07.000+00:00
+          customerId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          startedAt: 2000-01-23T04:56:07.000+00:00
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          priceId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          expiresAt: 2000-01-23T04:56:07.000+00:00
+          status: trialing
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/subscription_get_data"
+          type: array
+        pagination:
+          $ref: "#/components/schemas/product_list_pagination"
+      required:
+      - data
+      - pagination
+      type: object
+    subscription.create:
+      properties:
+        id:
+          format: uuid
+          type: string
+        customerId:
+          format: uuid
+          type: string
+        priceId:
+          format: uuid
+          type: string
+        cancelledAt:
+          format: date-time
+          nullable: true
+          type: string
+        expiresAt:
+          format: date-time
+          nullable: true
+          type: string
+        trial:
+          $ref: "#/components/schemas/subscription_create_trial"
+        trialPeriod:
+          enum:
+          - 1_week
+          - 1_month
+          - 1_year
+          type: string
+        trialEnd:
+          $ref: "#/components/schemas/subscription_create_trialEnd"
+        startedAt:
+          $ref: "#/components/schemas/subscription_create_trialEnd"
+      required:
+      - customerId
+      - priceId
+      type: object
+    subscription.createByExternalUser:
+      properties:
+        externalUserId:
+          type: string
+        phone:
+          type: string
+        priceId:
+          type: string
+        trial:
+          $ref: "#/components/schemas/subscription_create_trial"
+        trialPeriod:
+          enum:
+          - 1_week
+          - 1_month
+          - 1_year
+          type: string
+        trialEnd:
+          $ref: "#/components/schemas/subscription_create_trialEnd"
+        startedAt:
+          $ref: "#/components/schemas/subscription_create_trialEnd"
+        expiresAt:
+          $ref: "#/components/schemas/subscription_create_trialEnd"
+      required:
+      - externalUserId
+      - priceId
+      type: object
+    subscription.update:
+      properties:
+        priceId:
+          format: uuid
+          type: string
+        status:
+          enum:
+          - trialing
+          - active
+          - past_due
+          - paused
+          - cancelled
+          - expired
+          - pending_cancellation
+          type: string
+        nextBillingDate:
+          format: date-time
+          nullable: true
+          type: string
+        cancelledAt:
+          format: date-time
+          nullable: true
+          type: string
+        expiresAt:
+          format: date-time
+          nullable: true
+          type: string
+      type: object
+    invoice.get:
+      properties:
+        data:
+          $ref: "#/components/schemas/invoice_get_data"
+      required:
+      - data
+      type: object
+    invoice.list:
+      example:
+        pagination:
+          total: 5.962133916683182
+          limit: 1.4658129805029452
+          totalPages: 5.637376656633329
+          page: 6.027456183070403
+        data:
+        - organizationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          amount: amount
+          dueDate: 2000-01-23T04:56:07.000+00:00
+          paymentRequestId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          customerId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          status: pending
+        - organizationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          amount: amount
+          dueDate: 2000-01-23T04:56:07.000+00:00
+          paymentRequestId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          customerId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          status: pending
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/invoice_get_data"
+          type: array
+        pagination:
+          $ref: "#/components/schemas/product_list_pagination"
+      required:
+      - data
+      - pagination
+      type: object
+    configuration.get:
+      example:
+        data:
+          organizationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          isTestingMode: true
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          type: type
+          config: ""
+          updatedAt: 2000-01-23T04:56:07.000+00:00
+      properties:
+        data:
+          $ref: "#/components/schemas/configuration_get_data"
+      required:
+      - data
+      type: object
+    configuration.create:
+      properties:
+        data:
+          $ref: "#/components/schemas/configuration_create_data"
+      required:
+      - data
+      type: object
+    configuration.list:
+      example:
+        data:
+        - organizationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          isTestingMode: true
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          type: type
+          config: ""
+        - organizationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          isTestingMode: true
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          type: type
+          config: ""
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/configuration_list_data_inner"
+          type: array
+      required:
+      - data
+      type: object
+    paymentRequest.get:
+      example:
+        data:
+          totalAmount: 441289069
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          amount: -1803530559
+          phoneNumber: phoneNumber
+          environmentId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          retryCount: -1517921766
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          transactionId: transactionId
+          updatedAt: 2000-01-23T04:56:07.000+00:00
+      properties:
+        data:
+          $ref: "#/components/schemas/paymentRequest_get_data"
+      required:
+      - data
+      type: object
+    paymentRequest.create:
+      properties:
+        phoneNumber:
+          nullable: true
+          type: string
+        transactionId:
+          type: string
+        amount:
+          $ref: "#/components/schemas/getProducts_page_parameter"
+      required:
+      - amount
+      - transactionId
+      type: object
+    paymentRequest.refreshStatus:
+      example:
+        bankingApiResponses:
+        - configurationId: configurationId
+          configurationType: configurationType
+          body: body
+          transactionId: transactionId
+          outcome: outcome
+        - configurationId: configurationId
+          configurationType: configurationType
+          body: body
+          transactionId: transactionId
+          outcome: outcome
+        data:
+          totalAmount: 441289069
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          amount: -1803530559
+          phoneNumber: phoneNumber
+          environmentId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          retryCount: -1517921766
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          transactionId: transactionId
+          updatedAt: 2000-01-23T04:56:07.000+00:00
+      properties:
+        data:
+          $ref: "#/components/schemas/paymentRequest_get_data"
+        bankingApiResponses:
+          items:
+            $ref: "#/components/schemas/paymentRequest_refreshStatus_bankingApiResponses_inner"
+          type: array
+      required:
+      - bankingApiResponses
+      - data
+      type: object
+    payment.get:
+      example:
+        data:
+          amount: -1803530559
+          metadata: ""
+          completedAt: 2000-01-23T04:56:07.000+00:00
+          paymentRequestId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          passCode: passCode
+          payoutId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          referenceId: referenceId
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          phoneNumber: phoneNumber
+          environmentId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          configurationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          status: pending
+          updatedAt: 2000-01-23T04:56:07.000+00:00
+      properties:
+        data:
+          $ref: "#/components/schemas/payment_get_data"
+      required:
+      - data
+      type: object
+    payment.create:
+      properties:
+        configurationId:
+          format: uuid
+          type: string
+        transactionId:
+          type: string
+        phoneNumber:
+          type: string
+        passCode:
+          type: string
+      required:
+      - configurationId
+      - passCode
+      - phoneNumber
+      - transactionId
+      type: object
+    payment.update:
+      properties:
+        status:
+          enum:
+          - pending
+          - completed
+          - failed
+          - cancelled
+          type: string
+        amount:
+          type: number
+      type: object
+    checkoutSession.createBody:
+      properties:
+        paymentRequestId:
+          type: string
+        transactionId:
+          type: string
+        amount:
+          $ref: "#/components/schemas/getProducts_page_parameter"
+        phoneNumber:
+          type: string
+        successUrl:
+          type: string
+        cancelUrl:
+          type: string
+        expiresInMinutes:
+          maximum: 1440
+          minimum: 5
+          type: number
+      type: object
+    checkoutSession.create:
+      example:
+        data:
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          cancelUrl: cancelUrl
+          completedAt: 2000-01-23T04:56:07.000+00:00
+          environmentId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          selectedConfigurationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          paymentRequestId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          successUrl: successUrl
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          expiresAt: 2000-01-23T04:56:07.000+00:00
+          status: open
+          updatedAt: 2000-01-23T04:56:07.000+00:00
+        checkoutUrl: checkoutUrl
+      properties:
+        data:
+          $ref: "#/components/schemas/checkoutSession_create_data"
+        checkoutUrl:
+          type: string
+      required:
+      - checkoutUrl
+      - data
+      type: object
+    checkoutSession.get:
+      example:
+        latestPayment:
+          amount: 0.8008281904610115
+          paymentCode: paymentCode
+          id: id
+          referenceId: referenceId
+          status: status
+        data:
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          cancelUrl: cancelUrl
+          completedAt: 2000-01-23T04:56:07.000+00:00
+          environmentId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          selectedConfigurationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          paymentRequestId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          successUrl: successUrl
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          expiresAt: 2000-01-23T04:56:07.000+00:00
+          status: open
+          updatedAt: 2000-01-23T04:56:07.000+00:00
+        configurations:
+        - organizationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          isTestingMode: true
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          type: type
+          config: ""
+        - organizationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          isTestingMode: true
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          type: type
+          config: ""
+        organization:
+          website: website
+          phoneNumber: phoneNumber
+          name: name
+          id: id
+        paymentRequest:
+          totalAmount: 441289069
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          amount: -1803530559
+          phoneNumber: phoneNumber
+          environmentId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          retryCount: -1517921766
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          transactionId: transactionId
+          updatedAt: 2000-01-23T04:56:07.000+00:00
+      properties:
+        data:
+          $ref: "#/components/schemas/checkoutSession_create_data"
+        organization:
+          $ref: "#/components/schemas/getOrganizationById_200_response_data"
+        paymentRequest:
+          $ref: "#/components/schemas/paymentRequest_get_data"
+        configurations:
+          items:
+            $ref: "#/components/schemas/configuration_list_data_inner"
+          type: array
+        latestPayment:
+          $ref: "#/components/schemas/checkoutSession_get_latestPayment"
+      required:
+      - configurations
+      - data
+      - organization
+      - paymentRequest
+      type: object
+    checkoutSession.selectMethod.body:
+      properties:
+        configurationId:
+          type: string
+      required:
+      - configurationId
+      type: object
+    checkoutSession.switchMethod:
+      example:
+        latestPayment:
+          amount: 0.8008281904610115
+          paymentCode: paymentCode
+          id: id
+          referenceId: referenceId
+          status: status
+        data:
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          cancelUrl: cancelUrl
+          completedAt: 2000-01-23T04:56:07.000+00:00
+          environmentId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          selectedConfigurationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          paymentRequestId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          successUrl: successUrl
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          expiresAt: 2000-01-23T04:56:07.000+00:00
+          status: open
+          updatedAt: 2000-01-23T04:56:07.000+00:00
+        configurations:
+        - organizationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          isTestingMode: true
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          type: type
+          config: ""
+        - organizationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          isTestingMode: true
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          type: type
+          config: ""
+        organization:
+          website: website
+          phoneNumber: phoneNumber
+          name: name
+          id: id
+        paymentRequest:
+          totalAmount: 441289069
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          amount: -1803530559
+          phoneNumber: phoneNumber
+          environmentId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          retryCount: -1517921766
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          transactionId: transactionId
+          updatedAt: 2000-01-23T04:56:07.000+00:00
+      properties:
+        data:
+          $ref: "#/components/schemas/checkoutSession_create_data"
+        organization:
+          $ref: "#/components/schemas/getOrganizationById_200_response_data"
+        paymentRequest:
+          $ref: "#/components/schemas/paymentRequest_get_data"
+        configurations:
+          items:
+            $ref: "#/components/schemas/configuration_list_data_inner"
+          type: array
+        latestPayment:
+          $ref: "#/components/schemas/checkoutSession_get_latestPayment"
+      required:
+      - configurations
+      - data
+      - organization
+      - paymentRequest
+      type: object
+    checkoutSession.pay.body:
+      properties:
+        configurationId:
+          type: string
+        phoneNumber:
+          nullable: true
+          type: string
+        passCode:
+          type: string
+      required:
+      - configurationId
+      type: object
+    postConnectExchange_request:
+      properties:
+        platform_id:
+          type: string
+        platform_secret:
+          type: string
+        code:
+          type: string
+        webhook_payment_created_endpoint:
+          type: string
+        webhook_payment_updated_endpoint:
+          type: string
+      required:
+      - code
+      - platform_id
+      - platform_secret
+      - webhook_payment_created_endpoint
+      - webhook_payment_updated_endpoint
+      type: object
+    postConnectExchange_200_response_data:
+      example:
+        publishableKey: publishableKey
+        secretKey: secretKey
+        webhookSecret: webhookSecret
+      properties:
+        publishableKey:
+          type: string
+        secretKey:
+          type: string
+        webhookSecret:
+          type: string
+      required:
+      - publishableKey
+      - secretKey
+      - webhookSecret
+      type: object
+    postConnectExchange_200_response:
+      example:
+        data:
+          publishableKey: publishableKey
+          secretKey: secretKey
+          webhookSecret: webhookSecret
+      properties:
+        data:
+          $ref: "#/components/schemas/postConnectExchange_200_response_data"
+      required:
+      - data
+      type: object
+    deleteConnectRevoke_request:
+      properties:
+        platform_id:
+          type: string
+        platform_secret:
+          type: string
+        connection_id:
+          type: string
+      required:
+      - connection_id
+      - platform_id
+      - platform_secret
+      type: object
+    deleteConnectRevoke_200_response:
+      example:
+        success: true
+      properties:
+        success:
+          type: boolean
+      required:
+      - success
+      type: object
+    postPayment_200_response:
+      example:
+        metadata: ""
+        id: id
+        referenceId: referenceId
+        status: status
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        referenceId:
+          nullable: true
+          type: string
+        metadata: {}
+      required:
+      - id
+      - referenceId
+      - status
+      type: object
+    postCheckout_sessionPublicByIdPay_200_response:
+      example:
+        paymentCode: paymentCode
+        provider: provider
+        successUrl: successUrl
+        formData: ""
+        referenceId: referenceId
+        status: status
+      properties:
+        status:
+          type: string
+        referenceId:
+          nullable: true
+          type: string
+        paymentCode:
+          type: string
+        successUrl:
+          nullable: true
+          type: string
+        provider:
+          type: string
+        formData: {}
+      required:
+      - status
+      type: object
+    getProducts_page_parameter:
+      anyOf:
+      - default: "0"
+        format: numeric
+        type: string
+      - type: number
+    postMasriviInitiate_request:
+      properties:
+        transactionId:
+          type: string
+        configurationId:
+          type: string
+        phoneNumber:
+          type: string
+        acceptUrl:
+          type: string
+        declineUrl:
+          type: string
+        cancelUrl:
+          type: string
+      required:
+      - configurationId
+      - transactionId
+      type: object
+    postMasriviInitiate_200_response:
+      example:
+        paymentId: paymentId
+        formData: ""
+        purchaseref: purchaseref
+      properties:
+        formData: {}
+        purchaseref:
+          type: string
+        paymentId:
+          type: string
+      required:
+      - formData
+      - paymentId
+      - purchaseref
+      type: object
+    getOrganizationById_200_response_data:
+      example:
+        website: website
+        phoneNumber: phoneNumber
+        name: name
+        id: id
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        phoneNumber:
+          type: string
+        website:
+          nullable: true
+          type: string
+      required:
+      - id
+      - name
+      - phoneNumber
+      - website
+      type: object
+    getOrganizationById_200_response:
+      example:
+        data:
+          website: website
+          phoneNumber: phoneNumber
+          name: name
+          id: id
+      properties:
+        data:
+          $ref: "#/components/schemas/getOrganizationById_200_response_data"
+      required:
+      - data
+      type: object
+    product_get_data:
+      example:
+        organizationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        createdAt: 2000-01-23T04:56:07.000+00:00
+        environmentId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        name: name
+        description: description
+        active: true
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        id:
+          format: uuid
+          type: string
+        organizationId:
+          format: uuid
+          type: string
+        environmentId:
+          format: uuid
+          nullable: true
+          type: string
+        name:
+          type: string
+        description:
+          nullable: true
+          type: string
+        active:
+          type: boolean
+        createdAt:
+          format: date-time
+          nullable: true
+          type: string
+      required:
+      - active
+      - createdAt
+      - description
+      - environmentId
+      - id
+      - name
+      - organizationId
+      type: object
+    product_getWithPrices_data_prices_inner:
+      example:
+        createdAt: 2000-01-23T04:56:07.000+00:00
+        amount: -1803530559
+        productId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        active: true
+        interval: weekly
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        id:
+          format: uuid
+          type: string
+        productId:
+          format: uuid
+          type: string
+        amount:
+          maximum: 2147483647
+          minimum: -2147483648
+          type: integer
+        interval:
+          enum:
+          - weekly
+          - monthly
+          - yearly
+          type: string
+        active:
+          type: boolean
+        createdAt:
+          format: date-time
+          nullable: true
+          type: string
+      required:
+      - active
+      - amount
+      - createdAt
+      - id
+      - interval
+      - productId
+      type: object
+    product_getWithPrices_data:
+      example:
+        organizationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        createdAt: 2000-01-23T04:56:07.000+00:00
+        environmentId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        name: name
+        description: description
+        active: true
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        prices:
+        - createdAt: 2000-01-23T04:56:07.000+00:00
+          amount: -1803530559
+          productId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          active: true
+          interval: weekly
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        - createdAt: 2000-01-23T04:56:07.000+00:00
+          amount: -1803530559
+          productId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          active: true
+          interval: weekly
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        id:
+          format: uuid
+          type: string
+        organizationId:
+          format: uuid
+          type: string
+        environmentId:
+          format: uuid
+          nullable: true
+          type: string
+        name:
+          type: string
+        description:
+          nullable: true
+          type: string
+        active:
+          type: boolean
+        createdAt:
+          format: date-time
+          nullable: true
+          type: string
+        prices:
+          items:
+            $ref: "#/components/schemas/product_getWithPrices_data_prices_inner"
+          type: array
+      required:
+      - active
+      - createdAt
+      - description
+      - environmentId
+      - id
+      - name
+      - organizationId
+      - prices
+      type: object
+    product_list_pagination:
+      example:
+        total: 5.962133916683182
+        limit: 1.4658129805029452
+        totalPages: 5.637376656633329
+        page: 6.027456183070403
+      properties:
+        page:
+          type: number
+        limit:
+          type: number
+        total:
+          type: number
+        totalPages:
+          type: number
+      required:
+      - limit
+      - page
+      - total
+      - totalPages
+      type: object
+    price_update_amount:
+      anyOf:
+      - default: "0"
+        format: integer
+        type: string
+      - type: integer
+    customer_get_data:
+      example:
+        organizationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        createdAt: 2000-01-23T04:56:07.000+00:00
+        externalUserId: externalUserId
+        phone: phone
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        id:
+          format: uuid
+          type: string
+        organizationId:
+          format: uuid
+          type: string
+        externalUserId:
+          type: string
+        phone:
+          nullable: true
+          type: string
+        createdAt:
+          format: date-time
+          nullable: true
+          type: string
+      required:
+      - createdAt
+      - externalUserId
+      - id
+      - organizationId
+      - phone
+      type: object
+    subscription_get_data:
+      example:
+        organizationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        nextBillingDate: 2000-01-23T04:56:07.000+00:00
+        cancelledAt: 2000-01-23T04:56:07.000+00:00
+        customerId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        startedAt: 2000-01-23T04:56:07.000+00:00
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        priceId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        expiresAt: 2000-01-23T04:56:07.000+00:00
+        status: trialing
+      properties:
+        id:
+          format: uuid
+          type: string
+        organizationId:
+          format: uuid
+          type: string
+        customerId:
+          format: uuid
+          type: string
+        priceId:
+          format: uuid
+          type: string
+        status:
+          enum:
+          - trialing
+          - active
+          - past_due
+          - paused
+          - cancelled
+          - expired
+          - pending_cancellation
+          type: string
+        nextBillingDate:
+          format: date-time
+          nullable: true
+          type: string
+        startedAt:
+          format: date-time
+          nullable: true
+          type: string
+        cancelledAt:
+          format: date-time
+          nullable: true
+          type: string
+        expiresAt:
+          format: date-time
+          nullable: true
+          type: string
+      required:
+      - cancelledAt
+      - customerId
+      - expiresAt
+      - id
+      - nextBillingDate
+      - organizationId
+      - priceId
+      - startedAt
+      - status
+      type: object
+    subscription_create_trial:
+      anyOf:
+      - type: boolean
+      - enum:
+        - trialing
+        type: string
+    subscription_create_trialEnd:
+      anyOf:
+      - format: date-time
+        type: string
+      - format: date-time
+        type: string
+      - format: date
+        type: string
+      - type: number
+    invoice_get_data:
+      example:
+        organizationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        createdAt: 2000-01-23T04:56:07.000+00:00
+        amount: amount
+        dueDate: 2000-01-23T04:56:07.000+00:00
+        paymentRequestId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        customerId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        status: pending
+      properties:
+        id:
+          format: uuid
+          type: string
+        customerId:
+          format: uuid
+          type: string
+        organizationId:
+          format: uuid
+          type: string
+        status:
+          enum:
+          - pending
+          - paid
+          - void
+          - refunded
+          type: string
+        amount:
+          type: string
+        dueDate:
+          format: date-time
+          nullable: true
+          type: string
+        paymentRequestId:
+          format: uuid
+          nullable: true
+          type: string
+        createdAt:
+          format: date-time
+          nullable: true
+          type: string
+      required:
+      - amount
+      - createdAt
+      - customerId
+      - dueDate
+      - id
+      - organizationId
+      - paymentRequestId
+      - status
+      type: object
+    configuration_get_data:
+      example:
+        organizationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        createdAt: 2000-01-23T04:56:07.000+00:00
+        isTestingMode: true
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        type: type
+        config: ""
+        updatedAt: 2000-01-23T04:56:07.000+00:00
+      properties:
+        id:
+          format: uuid
+          type: string
+        type:
+          type: string
+        organizationId:
+          format: uuid
+          nullable: true
+          type: string
+        config: {}
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+        isTestingMode:
+          type: boolean
+      required:
+      - config
+      - createdAt
+      - id
+      - isTestingMode
+      - organizationId
+      - type
+      - updatedAt
+      type: object
+    configuration_create_data:
+      properties:
+        type:
+          type: string
+        config: {}
+        organizationId:
+          format: uuid
+          nullable: true
+          type: string
+        isTestingMode:
+          type: boolean
+      required:
+      - config
+      - type
+      type: object
+    configuration_list_data_inner:
+      example:
+        organizationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        isTestingMode: true
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        type: type
+        config: ""
+      properties:
+        id:
+          format: uuid
+          type: string
+        type:
+          type: string
+        organizationId:
+          format: uuid
+          nullable: true
+          type: string
+        config: {}
+        isTestingMode:
+          type: boolean
+      required:
+      - config
+      - id
+      - isTestingMode
+      - organizationId
+      - type
+      type: object
+    paymentRequest_get_data:
+      example:
+        totalAmount: 441289069
+        createdAt: 2000-01-23T04:56:07.000+00:00
+        amount: -1803530559
+        phoneNumber: phoneNumber
+        environmentId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        retryCount: -1517921766
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        transactionId: transactionId
+        updatedAt: 2000-01-23T04:56:07.000+00:00
+      properties:
+        id:
+          format: uuid
+          type: string
+        amount:
+          maximum: 2147483647
+          minimum: -2147483648
+          type: integer
+        totalAmount:
+          maximum: 2147483647
+          minimum: -2147483648
+          type: integer
+        phoneNumber:
+          nullable: true
+          type: string
+        transactionId:
+          type: string
+        environmentId:
+          format: uuid
+          type: string
+        retryCount:
+          maximum: 2147483647
+          minimum: -2147483648
+          type: integer
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+      - amount
+      - createdAt
+      - environmentId
+      - id
+      - phoneNumber
+      - retryCount
+      - totalAmount
+      - transactionId
+      - updatedAt
+      type: object
+    paymentRequest_refreshStatus_bankingApiResponses_inner:
+      example:
+        configurationId: configurationId
+        configurationType: configurationType
+        body: body
+        transactionId: transactionId
+        outcome: outcome
+      properties:
+        transactionId:
+          type: string
+        configurationId:
+          type: string
+        configurationType:
+          type: string
+        outcome:
+          type: string
+        body:
+          type: string
+      required:
+      - body
+      - configurationId
+      - configurationType
+      - outcome
+      - transactionId
+      type: object
+    payment_get_data:
+      example:
+        amount: -1803530559
+        metadata: ""
+        completedAt: 2000-01-23T04:56:07.000+00:00
+        paymentRequestId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        passCode: passCode
+        payoutId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        referenceId: referenceId
+        createdAt: 2000-01-23T04:56:07.000+00:00
+        phoneNumber: phoneNumber
+        environmentId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        configurationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        status: pending
+        updatedAt: 2000-01-23T04:56:07.000+00:00
+      properties:
+        id:
+          format: uuid
+          type: string
+        amount:
+          maximum: 2147483647
+          minimum: -2147483648
+          type: integer
+        phoneNumber:
+          nullable: true
+          type: string
+        passCode:
+          nullable: true
+          type: string
+        status:
+          enum:
+          - pending
+          - completed
+          - failed
+          - cancelled
+          type: string
+        environmentId:
+          format: uuid
+          type: string
+        paymentRequestId:
+          format: uuid
+          type: string
+        configurationId:
+          format: uuid
+          type: string
+        referenceId:
+          nullable: true
+          type: string
+        metadata: {}
+        payoutId:
+          format: uuid
+          nullable: true
+          type: string
+        completedAt:
+          format: date-time
+          nullable: true
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+      - amount
+      - completedAt
+      - configurationId
+      - createdAt
+      - environmentId
+      - id
+      - metadata
+      - passCode
+      - paymentRequestId
+      - payoutId
+      - phoneNumber
+      - referenceId
+      - status
+      - updatedAt
+      type: object
+    checkoutSession_create_data:
+      example:
+        createdAt: 2000-01-23T04:56:07.000+00:00
+        cancelUrl: cancelUrl
+        completedAt: 2000-01-23T04:56:07.000+00:00
+        environmentId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        selectedConfigurationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        paymentRequestId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        successUrl: successUrl
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        expiresAt: 2000-01-23T04:56:07.000+00:00
+        status: open
+        updatedAt: 2000-01-23T04:56:07.000+00:00
+      properties:
+        id:
+          format: uuid
+          type: string
+        paymentRequestId:
+          format: uuid
+          type: string
+        environmentId:
+          format: uuid
+          type: string
+        selectedConfigurationId:
+          format: uuid
+          nullable: true
+          type: string
+        status:
+          enum:
+          - open
+          - completed
+          - expired
+          - cancelled
+          type: string
+        successUrl:
+          nullable: true
+          type: string
+        cancelUrl:
+          nullable: true
+          type: string
+        expiresAt:
+          format: date-time
+          type: string
+        completedAt:
+          format: date-time
+          nullable: true
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+      - cancelUrl
+      - completedAt
+      - createdAt
+      - environmentId
+      - expiresAt
+      - id
+      - paymentRequestId
+      - selectedConfigurationId
+      - status
+      - successUrl
+      - updatedAt
+      type: object
+    checkoutSession_get_latestPayment:
+      example:
+        amount: 0.8008281904610115
+        paymentCode: paymentCode
+        id: id
+        referenceId: referenceId
+        status: status
+      properties:
+        id:
+          type: string
+        amount:
+          type: number
+        status:
+          type: string
+        referenceId:
+          nullable: true
+          type: string
+        paymentCode:
+          type: string
+      required:
+      - amount
+      - id
+      - referenceId
+      - status
+      type: object
+  securitySchemes:
+    ApiKey:
+      description: API key for authentication
+      in: header
+      name: Authorization
+      type: apiKey
+
